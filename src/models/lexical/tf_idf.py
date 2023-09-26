@@ -1,9 +1,10 @@
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from ..lexical_base import LexicalRetrieval
+from .lexical_base import LexicalRetrieval
 
 from typing import List, Dict
+
 
 class TFIDFRetrieval(LexicalRetrieval):
     def __init__(
@@ -21,7 +22,7 @@ class TFIDFRetrieval(LexicalRetrieval):
         query_vector = self.tfidf_vectorizer.transform([query])
         scores = np.dot(self.tfidf_matrix, query_vector.T).toarray().flatten()
         return scores
-    
+
     def retrieve(self, query: str, top_k: int = 10) -> List[Dict[str, str]]:
         scores = self.get_scores(query.split())
         sorted_scores = np.argsort(scores)[::-1][:top_k]

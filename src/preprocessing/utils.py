@@ -2,6 +2,7 @@
 from typing import List, Dict, Any
 import pandas as pd
 
+
 def json2csv(data: List[Dict[str, Any]], output_path: str):
     """
     json format:
@@ -26,7 +27,7 @@ def json2csv(data: List[Dict[str, Any]], output_path: str):
 
     res = []
 
-    for item in data[:10]: # TODO: remove this
+    for item in data[:10]:  # TODO: remove this
         for relevant_article in item["relevant_articles"]:
             res.append({
                 "query": item["text"],

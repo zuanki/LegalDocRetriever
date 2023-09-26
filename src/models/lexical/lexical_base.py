@@ -2,6 +2,7 @@ from typing import List, Dict
 import numpy as np
 from abc import ABC, abstractmethod
 
+
 class LexicalRetrieval(ABC):
     def __init__(
         self,
@@ -19,7 +20,7 @@ class LexicalRetrieval(ABC):
             for article in law['articles']:
                 documents.append(article['segmented_text'])
         return documents
-    
+
     def info_search(
         self,
         document: str
@@ -40,7 +41,7 @@ class LexicalRetrieval(ABC):
                     # res["segmented_text"] = article["segmented_text"]
 
         return res
-    
+
     @abstractmethod
     def retrieve(
         self,
@@ -82,5 +83,5 @@ class LexicalRetrieval(ABC):
         for i, doc in enumerate(self.documents):
             if doc == document:
                 return scores[i]
-            
+
         return 0.0

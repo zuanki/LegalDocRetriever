@@ -5,6 +5,7 @@ import torch
 from typing import List, Dict, Any
 from torch.utils.data import Dataset
 
+
 class LawDataset(Dataset):
     def __init__(
         self,
@@ -20,7 +21,7 @@ class LawDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.df)
-    
+
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         row = self.df.iloc[idx]
 
@@ -31,7 +32,7 @@ class LawDataset(Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             truncation=True,
-            truncation_strategy='only_second', # truncate document
+            truncation_strategy='only_second',  # truncate document
             padding='max_length',
             return_attention_mask=True,
             return_token_type_ids=True,
@@ -40,7 +41,7 @@ class LawDataset(Dataset):
 
         if self.train:
             # One-hot label
-            label =torch.zeros(2)
+            label = torch.zeros(2)
             label[row['label']] = 1
 
             return {
@@ -49,7 +50,7 @@ class LawDataset(Dataset):
                 'token_type_ids': encoding['token_type_ids'].flatten(),
                 'label': label.float()
             }
-        
+
         return {
             'input_ids': encoding['input_ids'].flatten(),
             'attention_mask': encoding['attention_mask'].flatten(),

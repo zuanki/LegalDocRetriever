@@ -2,7 +2,8 @@ from rank_bm25 import BM25Plus
 import numpy as np
 from typing import List, Dict
 
-from ..lexical_base import LexicalRetrieval
+from .lexical_base import LexicalRetrieval
+
 
 class BM25Retrieval(LexicalRetrieval):
     def __init__(
@@ -11,10 +12,9 @@ class BM25Retrieval(LexicalRetrieval):
     ):
         super().__init__(data)
 
-
         self.documents = self.data2documents()
         self.tokenize_documents = [doc.split() for doc in self.documents]
-        
+
         self.bm25 = BM25Plus(
             corpus=self.tokenize_documents,
             k1=1.2,
@@ -22,10 +22,9 @@ class BM25Retrieval(LexicalRetrieval):
             delta=1
         )
 
-
     def get_scores(self, query_tokens: List[str]) -> np.ndarray:
         return self.bm25.get_scores(query_tokens)
-    
+
     def retrieve(
         self,
         query: str,

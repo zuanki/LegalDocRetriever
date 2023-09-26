@@ -7,18 +7,41 @@ from transformers import BertModel, BertTokenizer
 from src.models import BertCLS
 from src.datasets import LawDataset
 
+from peft import LoraConfig, PeftModel, get_peft_model
+
+
 class Config:
     def __init__(self):
         # BERT
-        BERT_PRETRAINED_PATH = '/home/zuanki/Project/LawDocRetriever/checkpoints/m_bert'
+        BERT_PRETRAINED_PATH = '/home/zuanki/Project/LegalDocRetriever/checkpoints/m_bert'
         bert_model: BertModel = BertModel.from_pretrained(BERT_PRETRAINED_PATH)
-        bert_tokenizer: BertTokenizer = BertTokenizer.from_pretrained(BERT_PRETRAINED_PATH)
+        bert_tokenizer: BertTokenizer = BertTokenizer.from_pretrained(
+            BERT_PRETRAINED_PATH)
 
         # Model
         self.model = BertCLS(bert_model)
 
+        # Lora
+        self.LORA = True
+        LORA_CONFIG = LoraConfig(
+            lora_alpha=16,
+            lora_dropout=0.1,
+            r=8,
+            bias="none",
+            target_modules=["key", "value"],
+            modules_to_save=["classifier"]
+        )
+
+        if self.LORA:
+            self.model = get_peft_model(self.model, LORA_CONFIG)
+
+        else:
+            # Freeze bert_model
+            for param in self.model.bert_model.parameters():
+                param.requires_grad = False
+
         # DATA
-        TRAIN_DATA_PATH: str = "/home/zuanki/Project/LawDocRetriever/data/BM25/2022/train.csv"
+        TRAIN_DATA_PATH: str = "/home/zuanki/Project/LegalDocRetriever/data/BM25/2022/train.csv"
 
         # Dataset and DataLoader
         self.train_dataset = LawDataset(
@@ -40,7 +63,7 @@ class Config:
 
         # Training
         self.MAX_EPOCHS: int = 10
-        
+
         # Optimizer
         self.LEARNING_RATE: float = 1e-4
         self.ACCUMULATE_STEPS: int = 1
@@ -60,5 +83,5 @@ class Config:
         self.LOSS_FN = nn.BCEWithLogitsLoss()
 
         # Save
-        self.SAVE_DIR = "/home/zuanki/Project/LawDocRetriever/checkpoints/cls"
-        self.SAVE_FREQUENCY = 10 # epochs
+        self.SAVE_DIR = "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls"
+        self.SAVE_EVERY = 5

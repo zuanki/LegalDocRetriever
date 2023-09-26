@@ -1,3 +1,84 @@
+import torch
+from src.utils import print_trainable_parameters, print_trainable_layers
+from peft import inject_adapter_in_model, LoraConfig, get_peft_model
+from peft.peft_model import PeftModel
+from src.models import BertCLS
+from transformers import BertModel, BertTokenizer
+
+BERT_PRETRAINED_PATH = '/home/zuanki/Project/LegalDocRetriever/checkpoints/m_bert'
+bert_model: BertModel = BertModel.from_pretrained(BERT_PRETRAINED_PATH)
+bert_tokenizer: BertTokenizer = BertTokenizer.from_pretrained(
+    BERT_PRETRAINED_PATH)
+
+# Model
+model = BertCLS(bert_model)
+
+model.load_state_dict(
+    torch.load("/home/zuanki/Project/LegalDocRetriever/checkpoints/cls/2023-09-26_133554/ckpts/4.pt"))
+
+print(model)
+
+# # lora_config = LoraConfig(
+# #     lora_alpha=16,
+# #     lora_dropout=0.1,
+# #     r=2,
+# #     bias="none",
+# #     target_modules=["key", "value"],
+# #     modules_to_save=["classifier"]
+# # )
+# lora_config = LoraConfig.from_pretrained(
+#     "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls_lora")
+
+# model: PeftModel = get_peft_model(model, lora_config)
+
+# model.save_pretrained(
+#     "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls_lora")
+
+# model = PeftModel.from_pretrained(
+#     model,
+# )
+
+# print_trainable_parameters(model)
+
+
+# class DummyModel(torch.nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.embedding = torch.nn.Embedding(10, 10)
+#         self.linear = torch.nn.Linear(10, 10)
+#         self.lm_head = torch.nn.Linear(10, 10)
+
+#     def forward(self, input_ids):
+#         x = self.embedding(input_ids)
+#         x = self.linear(x)
+#         x = self.lm_head(x)
+#         return x
+
+
+# lora_config = LoraConfig(
+#     lora_alpha=16,
+#     lora_dropout=0.1,
+#     r=2,
+#     bias="none",
+#     target_modules=["linear"],
+#     modules_to_save=["lm_head"]
+# )
+
+
+# model = DummyModel()
+
+# print_trainable_parameters(model)
+# print_trainable_layers(model)
+
+# model = get_peft_model(model, lora_config)
+
+# dummy_inputs = torch.LongTensor([[0, 1, 2, 3, 4, 5, 6, 7]])
+# dummy_outputs = model(dummy_inputs)
+
+# print_trainable_parameters(model)
+# print_trainable_layers(model)
+# print(model)
+
 # Rename
 # import json
 # from tqdm import tqdm
@@ -24,7 +105,7 @@
 #         })
 
 #     new_data.append(tmp)
-    
+
 
 # # Save to file
 # with open("./data/BM25/2023/new_train.json", "w", encoding="utf-8") as f:
