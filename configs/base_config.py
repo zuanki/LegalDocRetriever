@@ -1,10 +1,11 @@
 import torch
-from torch.utils.data import DataLoader
+import torch.nn as nn
+# from torch.utils.data import DataLoader
 
 from transformers import BertModel, BertTokenizer
 
 from src.models import BertCLS
-from src.datasets import LawDataset
+# from src.datasets import LawDataset
 from src.training_utils.losses import WeightedCrossEntropyLoss
 
 from peft import LoraConfig, get_peft_model
@@ -13,9 +14,9 @@ from peft import LoraConfig, get_peft_model
 class Config:
     def __init__(self):
         # BERT
-        BERT_PRETRAINED_PATH = '/home/zuanki/Project/LegalDocRetriever/checkpoints/m_bert'
+        BERT_PRETRAINED_PATH = 'bert-base-multilingual-cased'
         bert_model: BertModel = BertModel.from_pretrained(BERT_PRETRAINED_PATH)
-        bert_tokenizer: BertTokenizer = BertTokenizer.from_pretrained(
+        self.tokenizer: BertTokenizer = BertTokenizer.from_pretrained(
             BERT_PRETRAINED_PATH)
 
         # Model
@@ -26,7 +27,7 @@ class Config:
         LORA_CONFIG = LoraConfig(
             lora_alpha=16,
             lora_dropout=0.1,
-            r=8,
+            r=4,
             bias="none",
             target_modules=["key", "value"],
             modules_to_save=["classifier"]
@@ -41,28 +42,28 @@ class Config:
                 param.requires_grad = False
 
         # DATA
-        TRAIN_DATA_PATH: str = "/home/zuanki/Project/LegalDocRetriever/data/BM25/2022/train.csv"
+        # TRAIN_DATA_PATH: str = "/home/zuanki/Project/LegalDocRetriever/data/BM25/2022/train.csv"
 
-        # Dataset and DataLoader
-        self.train_dataset = LawDataset(
-            path_df=TRAIN_DATA_PATH,
-            tokenizer=bert_tokenizer,
-            max_len=512,
-            train=True
-        )
+        # # Dataset and DataLoader
+        # self.train_dataset = LawDataset(
+        #     path_df=TRAIN_DATA_PATH,
+        #     tokenizer=bert_tokenizer,
+        #     max_len=512,
+        #     train=True
+        # )
 
-        self.BATCH_SIZE: int = 8
+        self.BATCH_SIZE: int = 32
         self.NUM_WORKERS: int = 0
 
-        self.train_dataloader = DataLoader(
-            self.train_dataset,
-            batch_size=self.BATCH_SIZE,
-            num_workers=self.NUM_WORKERS,
-            shuffle=True
-        )
+        # self.train_dataloader = DataLoader(
+        #     self.train_dataset,
+        #     batch_size=self.BATCH_SIZE,
+        #     num_workers=self.NUM_WORKERS,
+        #     shuffle=True
+        # )
 
         # Training
-        self.MAX_EPOCHS: int = 10
+        self.MAX_EPOCHS: int = 20
 
         # Optimizer
         self.LEARNING_RATE: float = 1e-4
@@ -80,10 +81,10 @@ class Config:
         }
 
         # Loss
-        # self.LOSS_FN = nn.CrossEntropyLoss()
-        WEIGHT = torch.tensor([0.75, 0.25])  # Class 0: 0.75, Class 1: 0.25
-        self.LOSS_FN = WeightedCrossEntropyLoss(weight=WEIGHT)
+        self.LOSS_FN = nn.CrossEntropyLoss()
+        # WEIGHT = torch.tensor([0.75, 0.25])  # Class 0: 0.75, Class 1: 0.25
+        # self.LOSS_FN = WeightedCrossEntropyLoss(weight=WEIGHT)
 
         # Save
-        self.SAVE_DIR = "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls"
+        # self.SAVE_DIR = "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls"
         self.SAVE_EVERY = 1

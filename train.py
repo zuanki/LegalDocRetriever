@@ -1,3 +1,6 @@
+from torch.utils.data import DataLoader
+from src.datasets import LawDataset
+from src.utils import print_trainable_parameters
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 import os
@@ -11,6 +14,7 @@ from tqdm import tqdm
 import transformers
 transformers.logging.set_verbosity_error()
 
+
 logger = get_logger(__name__, log_level="INFO")
 
 
@@ -18,6 +22,10 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('config', type=str,
                         default='configs.base_config', help='config file path')
+    parser.add_argument('--data_path', type=str,
+                        default='data/BM25/2022/train.csv', help='data path')
+    parser.add_argument('--save_dir', type=str,
+                        default='checkpoints/cls', help='save dir')
 
     args = parser.parse_args()
 
@@ -26,6 +34,8 @@ def parse_args():
 
 def main():
     args = parse_args()
+    TRAIN_DATA_PATH = args.data_path
+    SAVE_DIR = args.save_dir
 
     module = importlib.import_module(args.config)
     config = module.Config()
@@ -35,7 +45,7 @@ def main():
     _time = datetime.datetime.now().strftime("%H%M%S")
 
     time_str = f"{date}_{_time}"
-    save_folder = f"{config.SAVE_DIR}/{time_str}"
+    save_folder = f"{SAVE_DIR}/{time_str}"
     os.makedirs(f"{save_folder}/ckpts", exist_ok=True)
 
     # Write config
@@ -48,9 +58,23 @@ def main():
 
     # Model
     model = config.model
+    print_trainable_parameters(model)
 
     # Dataloader
-    train_dataloader = config.train_dataloader
+    # train_dataloader = config.train_dataloader
+    train_dataset = LawDataset(
+        path_df=TRAIN_DATA_PATH,
+        tokenizer=config.tokenizer,
+        max_len=512,
+        train=True
+    )
+
+    train_dataloader = DataLoader(
+        train_dataset,
+        batch_size=config.BATCH_SIZE,
+        num_workers=config.NUM_WORKERS,
+        shuffle=True
+    )
 
     # Loss
     loss_fn = config.LOSS_FN
@@ -147,3 +171,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# accelerate launch --mixed_precision fp16 train.py configs.base_config --data_path data/BM25/2022/train.csv --save_dir checkpoints/cls
