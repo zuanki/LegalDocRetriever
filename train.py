@@ -116,7 +116,6 @@ def main():
                 os.makedirs(
                     f"{save_folder}/ckpts/lora_{epoch}", exist_ok=True)
                 model.save_pretrained(f"{save_folder}/ckpts/lora_{epoch}")
-
         else:
             if (epoch + 1) % config.SAVE_EVERY == 0:
                 accelerator.wait_for_everyone()

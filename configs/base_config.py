@@ -1,13 +1,13 @@
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 
 from transformers import BertModel, BertTokenizer
 
 from src.models import BertCLS
 from src.datasets import LawDataset
+from src.training_utils.losses import WeightedCrossEntropyLoss
 
-from peft import LoraConfig, PeftModel, get_peft_model
+from peft import LoraConfig, get_peft_model
 
 
 class Config:
@@ -80,8 +80,10 @@ class Config:
         }
 
         # Loss
-        self.LOSS_FN = nn.BCEWithLogitsLoss()
+        # self.LOSS_FN = nn.CrossEntropyLoss()
+        WEIGHT = torch.tensor([0.75, 0.25])  # Class 0: 0.75, Class 1: 0.25
+        self.LOSS_FN = WeightedCrossEntropyLoss(weight=WEIGHT)
 
         # Save
         self.SAVE_DIR = "/home/zuanki/Project/LegalDocRetriever/checkpoints/cls"
-        self.SAVE_EVERY = 5
+        self.SAVE_EVERY = 1
