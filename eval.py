@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('--data_path', type=str,
                         default='data/BM25/2022/train.csv', help='data path')
     parser.add_argument('--checkpoint', type=str,
-                        default='checkpoints/cls/2023-09-28_100605/ckpts/lora_1', help='checkpoint path')
+                        default='checkpoints/cls/Kaggle/lora_20', help='checkpoint path')
     parser.add_argument('--result_path', type=str,
                         default='reports', help='checkpoint path')
 
@@ -49,7 +49,7 @@ def evaluate():
 
     # Load classifier weights
     model.base_model.classifier.load_state_dict(torch.load(
-        os.path.join(CHECKPOINT_PATH, 'classifier.pt')))
+        os.path.join(CHECKPOINT_PATH, 'classifier.pt'), map_location=DEVICE))
 
     model = model.to(DEVICE)
     print_trainable_parameters(model)
