@@ -11,6 +11,7 @@ import argparse
 import importlib
 from tqdm import tqdm
 
+import torch
 import transformers
 transformers.logging.set_verbosity_error()
 
@@ -139,7 +140,14 @@ def main():
                 # accelerator.wait_for_everyone()
                 os.makedirs(
                     f"{save_folder}/ckpts/lora_{epoch}", exist_ok=True)
-                model.save_pretrained(f"{save_folder}/ckpts/lora_{epoch}")
+                # Save Lora
+                model.save_pretrained(
+                    f"{save_folder}/ckpts/lora_{epoch}")
+
+                # Save classifier weights
+                classifier_state_dict = model.base_model.classifier.state_dict()
+                torch.save(
+                    classifier_state_dict, f"{save_folder}/ckpts/lora_{epoch}/classifier.pt")
         else:
             if (epoch + 1) % config.SAVE_EVERY == 0:
                 accelerator.wait_for_everyone()
@@ -153,8 +161,13 @@ def main():
         # accelerator.wait_for_everyone()
         os.makedirs(
             f"{save_folder}/ckpts/lora_{config.MAX_EPOCHS + 1}", exist_ok=True)
+        # Save Lora
         model.save_pretrained(
             f"{save_folder}/ckpts/lora_{config.MAX_EPOCHS + 1}")
+        # Save classifier weights
+        classifier_state_dict = model.base_model.classifier.state_dict()
+        torch.save(
+            classifier_state_dict, f"{save_folder}/ckpts/lora_{config.MAX_EPOCHS + 1}/classifier.pt")
     else:
         accelerator.wait_for_everyone()
         model_state_dict = accelerator.get_state_dict(model)
