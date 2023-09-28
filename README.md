@@ -14,7 +14,7 @@ The primary objective of this project is to retrieve Vietnamese legal documents 
 ## Vietnamese Legal Document Dataset
 **Sample Query:**
 ```
-"Trường hợp công dân không trong độ tuổi nhập ngũ, nếu đi du học, xuất khẩu lao động không cần phải khai báo tạm vắng, đúng hay sai?"
+Trường hợp công dân không trong độ tuổi nhập ngũ, nếu đi du học, xuất khẩu lao động không cần phải khai báo tạm vắng, đúng hay sai?
 ```
 (English Translation: "In the case of citizens who are not of military age, if they study abroad or export labor, they do not need to declare temporary absence. Is it true or false?")
 
@@ -28,4 +28,7 @@ The primary objective of this project is to retrieve Vietnamese legal documents 
 ]
 ```
 ## Experiment Results
-![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/res.png)
+![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/exp.png)
+
+## Streamlit App
+![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/demo.png)
