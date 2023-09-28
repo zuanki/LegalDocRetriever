@@ -27,3 +27,5 @@ The primary objective of this project is to retrieve Vietnamese legal documents 
     }
 ]
 ```
+## Experiment Results
+![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/res.png)
