@@ -1,6 +1,7 @@
 # Convert json to csv
 from typing import List, Dict, Any
 import pandas as pd
+import re
 
 
 def json2csv(data: List[Dict[str, Any]], output_path: str):
@@ -38,3 +39,21 @@ def json2csv(data: List[Dict[str, Any]], output_path: str):
     df = pd.DataFrame(res)
 
     df.to_csv(output_path, index=False)
+
+
+def clean_query(query: str) -> str:
+    """
+    Clean query
+    :param query: Query string
+    :return: Cleaned query string
+    """
+
+    query = re.sub(r"[^\w\s]", "", query)
+
+    query = re.sub(r"\n", " ", query)
+
+    query = re.sub(r"\s+", " ", query)
+
+    query = query.lower()
+
+    return query

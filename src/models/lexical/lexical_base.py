@@ -37,7 +37,7 @@ class LexicalRetrieval(ABC):
                 if article['segmented_text'] == document:
                     res['law_id'] = law['id']
                     res['article_id'] = article['id']
-                    # res["text"] = article["text"]
+                    res["text"] = article["text"]
                     # res["segmented_text"] = article["segmented_text"]
 
         return res
