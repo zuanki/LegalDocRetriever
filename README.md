@@ -31,4 +31,4 @@ Trường hợp công dân không trong độ tuổi nhập ngũ, nếu đi du h
 ![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/exp.png)
 
 ## Streamlit App
-![image](https://github.com/zuanki/LegalDocRetriever/blob/main/assets/demo.png)
+<img src="https://github.com/zuanki/LegalDocRetriever/blob/main/assets/demo.png" width="75%" style="align: center;">
